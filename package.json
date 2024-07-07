@@ -14,8 +14,6 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@octokit/types": "^13.5.0",
-    "@tanstack/react-table": "^8.19.2",
-    "@types/react-table": "^7.7.20",
     "ag-grid-react": "^32.0.0",
     "framer-motion": "^11.2.13",
     "octokit": "^4.0.2",

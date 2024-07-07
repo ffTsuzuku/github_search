@@ -1,20 +1,66 @@
-import {useMemo} from "react"
 import { ListUserRepos, ListOrgRepos } from "../utility/oktokitHelper"
 import { AgGridReact } from "ag-grid-react"
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { border, Box, Flex, FormControl, FormLabel, HStack, Select } from "@chakra-ui/react";
+import { FormControl, FormLabel, HStack, Image, Link, Select } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
 import {PaginationData, SortingData} from "./SearchPage";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { SortableField } from "../utility/oktokitHelper";
-import {color} from "framer-motion";
+
+const formatDate = (date: string) => {
+	const userLocale = navigator.language
+	const datObj = new Date(date)
+	return datObj.toLocaleDateString(userLocale, {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
+	})
+}
 const columns = [
-	{field: 'full_name', flex: 1, minWidth: 150},
-	{field: 'description', flex: 2, minWidth: 150},
-	{field: 'created_at', flex: 1, minWidth: 150},
-	{field: 'updated_at', flex: 1, minWidth: 150},
-	{field: 'pushed_at', flex: 1, minWidth: 150},
+	{
+		cellRenderer: (row: any) => <OwnerAvatar 
+			avatarUrl={row.data.owner.avatar_url} 
+			name={row.data.owner.login} 
+			profileUrl={row.data.owner.html_url}
+		/>,
+		flex: 1, 
+		minWidth: 150,
+		headerName: 'Owner'
+	},
+	{
+		cellRenderer: (row: any) => <Link 
+			href={row.data.html_url} 
+			color={'blue.300'} isExternal
+		>
+			{row.data.full_name}
+		</Link>,
+		flex: 1, 
+		minWidth: 150,
+		headerName: 'Full Name'
+	},
+	{field: 'description', flex: 2, minWidth: 150, headerName: 'Description'},
+	{
+		field: 'created_at', 
+		flex: 1, 
+		minWidth: 150, 
+		headerName: 'Created',
+		valueFormatter: (row: any) => formatDate(row.value) 
+	},
+	{
+		field: 'updated_at',
+		flex: 1,
+		minWidth: 150,
+		headerName: 'Last Update',
+		valueFormatter: (row: any) => formatDate(row.value) 
+	},
+	{
+		field: 'pushed_at', 
+		flex: 1, 
+		minWidth: 150,
+		headerName: 'Last Commit',
+		valueFormatter: (row: any) => formatDate(row.value) 
+	},
 ]	
 
 const sortOptions: {label: string, value: SortableField}[] = [
@@ -44,7 +90,6 @@ const RepositoryList = ({
 	quantityOptions,
 }: RepositoryListProps) => {
 
-	//TODO: Fix the date format
 	//TODO: add more height to rable rows
 	//TODO: add creator name & profile icon
 	//TODO: Memoize props to not triggered when search type changed
@@ -68,13 +113,8 @@ const RepositoryList = ({
 
 	const onFirstPage = page === 1
 	const onLastPage = page === lastPage
-	const backArrowProps = {
-		color: onFirstPage ? '#514f4f' : undefined,
-		onClick: onFirstPage ? undefined : () => handlePaginationChange(page - 1, 'page'),
-		cursor: onFirstPage ? undefined : 'pointer'
-	}
-	const forwardArrowProps = {
-		color: onLastPage ? '#514f4f' : undefined,
+	const backArrowProps = { color: onFirstPage ? '#514f4f' : undefined, onClick: onFirstPage ? undefined : () => handlePaginationChange(page - 1, 'page'), cursor: onFirstPage ? undefined : 'pointer' } 
+	const forwardArrowProps = { color: onLastPage ? '#514f4f' : undefined,
 		onClick: onLastPage ? undefined : () => handlePaginationChange(page + 1, 'page'),
 		cursor: onLastPage ? undefined : 'pointer'
 	}
@@ -117,7 +157,11 @@ const RepositoryList = ({
 			gap={2} 
 			borderRadius={'0px 0px 8px 8px'}
 		>
-			<HStack alignItems={'center'} w={['60%', '35%', '25%', '25%']} justifyContent={'flex-end'}>
+			<HStack 
+				alignItems={'center'} 
+				w={{base: '55%', sm: '60%', md: '75%', lg: '87%', xl: '83%', '2xl': '82%'}} 
+				justifyContent={'flex-end'}
+			>
 				<p>{'Page Size:'}</p>
 				<Select value={quantity} width={'100px'} borderRadius={10} onChange={
 					(event) => handlePaginationChange(Number(event.target.value), 'quantity')
@@ -128,13 +172,25 @@ const RepositoryList = ({
 					)}
 				</Select>
 			</HStack>
-			<HStack w={['40%', '25%', '20%', '15%', '8%']} justifyContent={'flex-end'}>
+			<HStack 
+				w={{base: '45%', sm: '40%', md: '25%', lg: '17%', xl: '13%', '2xl': '12%'}} 
+				justifyContent={'flex-end'}
+			>
 				<MdArrowBackIos {...backArrowProps}/>
 				<p>{`Page ${page} of ${lastPage}`}</p>
 				<MdArrowForwardIos {...forwardArrowProps} />
 			</HStack>
 		</HStack>
   </div>
+}
+
+function OwnerAvatar ({avatarUrl, profileUrl, name}: {avatarUrl: string, profileUrl: string, name: string}) {
+	return <HStack alignItems={'center'}>
+		<Image src={avatarUrl} alt={name} w={7} borderRadius={'30px'}/>
+		<Link href={profileUrl} isExternal color={'blue.300'}>
+			{name}
+		</Link>
+	</HStack>
 }
 
 export default RepositoryList
