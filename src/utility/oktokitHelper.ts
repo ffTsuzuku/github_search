@@ -94,9 +94,15 @@ const getRepositoriesForUserOrOrg  = async (
 			})
 
 		const paginationLinks = response.headers?.link ?? ''
-		const [_, lastPageUrl] = paginationLinks?.split(',')
-		const lastPage = Number(lastPageUrl?.match(/&page=(\d+)>/)?.[1]) || 1
+		const links = paginationLinks?.split(',')
+		const lastPageUrl = links.filter((link) => link.includes('last'))[0]
+		let lastPage = page
+		if (lastPageUrl) {
+			const possibleMatches = lastPageUrl.match(/\d+/g)!
+			lastPage = parseInt(possibleMatches[2], 10)
+		}
 
+		console.log({lastPage, lastPageUrl, paginationLinks})
 		//@ts-ignore
         return { data: response.data, lastPage }
     } catch (e) {

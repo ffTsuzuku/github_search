@@ -8,6 +8,7 @@ import { useColorModeValue } from "@chakra-ui/react";
 import {PaginationData, SortingData} from "./SearchPage";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { SortableField } from "../utility/oktokitHelper";
+import {color} from "framer-motion";
 const columns = [
 	{field: 'full_name', flex: 1, minWidth: 150},
 	{field: 'description', flex: 2, minWidth: 150},
@@ -46,9 +47,7 @@ const RepositoryList = ({
 	//TODO: Fix the date format
 	//TODO: add more height to rable rows
 	//TODO: add creator name & profile icon
-	//TODO: Filtering & sorting via api
 	//TODO: Memoize props to not triggered when search type changed
-	//TODO: test without api key
 	const theme = useColorModeValue('ag-theme-quartz', 'ag-theme-quartz-dark')
 	const bgColor = useColorModeValue('#e2e8f0','#1f2936')
 	const {page, quantity} = paginationData
@@ -65,6 +64,19 @@ const RepositoryList = ({
 		type: keyof SortingData
 	) => {
 		setSortData(type, event.target.value)
+	}
+
+	const onFirstPage = page === 1
+	const onLastPage = page === lastPage
+	const backArrowProps = {
+		color: onFirstPage ? '#514f4f' : undefined,
+		onClick: onFirstPage ? undefined : () => handlePaginationChange(page - 1, 'page'),
+		cursor: onFirstPage ? undefined : 'pointer'
+	}
+	const forwardArrowProps = {
+		color: onLastPage ? '#514f4f' : undefined,
+		onClick: onLastPage ? undefined : () => handlePaginationChange(page + 1, 'page'),
+		cursor: onLastPage ? undefined : 'pointer'
 	}
 
 	return <div style={{ height: '80%', padding: '50px'}}>		
@@ -117,14 +129,9 @@ const RepositoryList = ({
 				</Select>
 			</HStack>
 			<HStack w={['40%', '25%', '20%', '15%', '8%']} justifyContent={'flex-end'}>
-				<MdArrowBackIos 
-					onClick={() => handlePaginationChange(page - 1, 'page')} 
-					cursor={'pointer'}
-				/>
+				<MdArrowBackIos {...backArrowProps}/>
 				<p>{`Page ${page} of ${lastPage}`}</p>
-				<MdArrowForwardIos onClick={() => handlePaginationChange(page + 1, 'page')} 
-					cursor={'pointer'}
-				/>
+				<MdArrowForwardIos {...forwardArrowProps} />
 			</HStack>
 		</HStack>
   </div>

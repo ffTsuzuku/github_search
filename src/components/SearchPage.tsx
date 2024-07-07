@@ -26,6 +26,7 @@ export type PaginationData = {page: number, quantity: number}
 export type SortingData = {direction: 'asc' | 'desc', type: SortableField}
 
 const quantityOptions = [10, 25, 50, 75, 100]
+const paginationDefault = {page: 1, quantity: quantityOptions[1]}
 const SearchPage = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -36,9 +37,7 @@ const SearchPage = () => {
 	const [searchType, setSearchType] = useState<SearchableType>('user')
 
 	const currentSearch = useRef<AbortController|undefined>(undefined)
-	const paginationData = useRef<PaginationData>(
-		{page: 1, quantity: quantityOptions[1]}
-	)
+	const paginationData = useRef<PaginationData>({...paginationDefault})
 
 	const sortingData = useRef<SortingData>({direction: 'desc', type: 'created'})
 
@@ -70,6 +69,11 @@ const SearchPage = () => {
 		const newData: SortingData = {...sortingData.current, [property]: value}
 		sortingData.current = newData
 
+		search()
+	}
+
+	const newSearch = () => {
+		paginationData.current = {...paginationDefault}
 		search()
 	}
 
@@ -155,7 +159,7 @@ const SearchPage = () => {
 							value={searchQuery}
 							onChange={handleQueryChange}
 						/>
-						<InputRightElement cursor="pointer" onClick={search}>
+						<InputRightElement cursor="pointer" onClick={newSearch}>
 							<CiSearch />
 						</InputRightElement>
 					</InputGroup>
