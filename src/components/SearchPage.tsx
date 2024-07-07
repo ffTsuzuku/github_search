@@ -21,12 +21,19 @@ import {
 	SortableField
 } from "../utility/oktokitHelper";
 import RepositoryList from "./RepositoryList";
+import {onEnterKey} from "../utility/utilityEvents";
 
 export type PaginationData = {page: number, quantity: number}
 export type SortingData = {direction: 'asc' | 'desc', type: SortableField}
 
+// defines the options for # of items to display
 const quantityOptions = [10, 25, 50, 75, 100]
+
 const paginationDefault = {page: 1, quantity: quantityOptions[1]}
+
+/**
+ * Handles the logic for the search nav. And displays the table. 
+ **/
 const SearchPage = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -40,22 +47,29 @@ const SearchPage = () => {
 	const paginationData = useRef<PaginationData>({...paginationDefault})
 
 	const sortingData = useRef<SortingData>({direction: 'desc', type: 'created'})
+	const searchRef = useRef<HTMLInputElement>(null)
 
-	//abort any request on unmount
 	useEffect(() => {
+		//focus search bar on load
+		searchRef.current?.focus()
+
+		//abort any request on unmount
 		return () => currentSearch.current?.abort()
 	},[])
 
+	// are we searching for a user or an org
 	const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
 		const type = event.target.value as SearchableType
 		setSearchType(type)
 	}
 
+	//manage the search inputs value
 	const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const query = event.target.value
 		setSearchQuery(query)
 	}
 
+	//update the users pagination preferences and search
 	const handlePaginationChange = (
 		propety: keyof PaginationData, 
 		value: number
@@ -65,6 +79,7 @@ const SearchPage = () => {
 		search()
 	}
 
+	//update the users sorting preference and search
 	const handleSortingChange = (property: keyof SortingData, value: string) => {
 		const newData: SortingData = {...sortingData.current, [property]: value}
 		sortingData.current = newData
@@ -72,11 +87,13 @@ const SearchPage = () => {
 		search()
 	}
 
+	//ensures that pagination is reset before performing search
 	const newSearch = () => {
 		paginationData.current = {...paginationDefault}
 		search()
 	}
 
+	//begin searching for the specified user / org
 	const search = async () => {
 		// don't allow request when rate limited 
 		if (serchResult?.rateLimited || searchQuery == '') return 
@@ -113,11 +130,13 @@ const SearchPage = () => {
 	}
 
 
+	//modify the toggle icon based on current theme
   let themeToggleIcon = <CiSun size={30} />;
   if (colorMode === "light") {
     themeToggleIcon = <FiMoon size={30} />;
   }
 
+	//Something went wrong when searching
 	const errorMessageJsx = !!serchResult?.errorMessage && <VStack 
 		justifyContent={'center'} 
 		alignItems={'center'} 
@@ -128,6 +147,7 @@ const SearchPage = () => {
 		<p>{serchResult.errorMessage}</p>
 	</VStack>
 
+	//Renders the repositories
 	const tableJsx = !!serchResult?.data && <RepositoryList 
 		repositories={serchResult.data} 
 		lastPage={serchResult?.lastPage!}
@@ -154,10 +174,12 @@ const SearchPage = () => {
 				<HStack w={'80%'}>
 					<InputGroup w={'60%'}>
 						<Input
+							ref={searchRef}
 							type="text"
 							placeholder={'Search...'}
 							value={searchQuery}
 							onChange={handleQueryChange}
+							onKeyDown={(event) => onEnterKey(event, newSearch)}
 						/>
 						<InputRightElement cursor="pointer" onClick={newSearch}>
 							<CiSearch />
