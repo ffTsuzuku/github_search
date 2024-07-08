@@ -18,6 +18,8 @@ type BaseRepositoriesListResponse<T> = {
 export type ListUserReposResponse = BaseRepositoriesListResponse<ListUserRepos[]> 
 export type ListOrgReposResponse = BaseRepositoriesListResponse<ListOrgRepos[]> 
 export type SortableField = 'created' | 'updated' | 'pushed' | 'full_name'
+export type FilterableFieldsForOrgs = 'all'| 'public'| 'private' | 'forks'| 'sources'| 'member'
+export type FilterableFieldsForUsers = 'all' | 'owner' | 'member'
 
 const getUsersRepositories = (
     username: string,
@@ -25,7 +27,8 @@ const getUsersRepositories = (
 	page: number, 
 	quantity: number,
 	sortType: SortableField,
-	sortDirection: 'asc' | 'desc'
+	sortDirection: 'asc' | 'desc',
+	filterBy?: FilterableFieldsForUsers
 ): Promise<ListUserReposResponse> => {
     return getRepositoriesForUserOrOrg(
 		username, 'user', 
@@ -33,7 +36,8 @@ const getUsersRepositories = (
 		page, 
 		quantity,
 		sortType,
-		sortDirection
+		sortDirection,
+		filterBy
 	) 
 }
 const getOrgsRepositories = (
@@ -42,7 +46,8 @@ const getOrgsRepositories = (
 	page: number, 
 	quantity: number,
 	sortType: SortableField,
-	sortDirection: 'asc' | 'desc'
+	sortDirection: 'asc' | 'desc',
+	filterBy?: FilterableFieldsForOrgs
 ): Promise<ListOrgReposResponse> => {
     return getRepositoriesForUserOrOrg(
 		org, 'org',
@@ -50,7 +55,8 @@ const getOrgsRepositories = (
 		page,
 		quantity,
 		sortType,
-		sortDirection
+		sortDirection,
+		filterBy
 	)
 }
 
@@ -68,13 +74,15 @@ const getRepositoriesForUserOrOrg  = async (
 	page: number, 
 	quantity: number,
 	sortType: SortableField,
-	sortDirection: 'asc' | 'desc'
+	sortDirection: 'asc' | 'desc',
+	filterBy: FilterableFieldsForOrgs | FilterableFieldsForUsers
 ): Promise<
 	ListUserReposResponse|
 	ListOrgReposResponse|
 	BaseRepositoriesListResponse<undefined>
 > => {
     try {
+		console.log('filter by', filterBy)
         const response = type === 'user' ? 
 			await  octokit.rest.repos.listForUser({
 				username,
@@ -82,6 +90,7 @@ const getRepositoriesForUserOrOrg  = async (
 				page: page,
 				sort: sortType,
 				direction: sortDirection,
+				type: filterBy,
 				request: { signal },
 			}) : 
 			await octokit.rest.repos.listForOrg({
@@ -89,6 +98,7 @@ const getRepositoriesForUserOrOrg  = async (
 				per_page: quantity,
 				page: page,
 				sort: sortType,
+				type: filterBy,
 				direction: sortDirection,
 				request: { signal },
 			})

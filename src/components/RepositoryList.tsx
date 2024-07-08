@@ -1,4 +1,10 @@
-import { ListUserRepos, ListOrgRepos } from "../utility/oktokitHelper"
+import { 
+	ListUserRepos, 
+	ListOrgRepos, 
+	FilterableFieldsForOrgs, 
+	FilterableFieldsForUsers, 
+	SearchableType
+} from "../utility/oktokitHelper"
 import { AgGridReact } from "ag-grid-react"
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -7,6 +13,7 @@ import { useColorModeValue } from "@chakra-ui/react";
 import {PaginationData, SortingData} from "./SearchPage";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { SortableField } from "../utility/oktokitHelper";
+import {capitalizeFirstLetter} from "../utility/textUtility";
 
 const formatDate = (date: string) => {
 	const userLocale = navigator.language
@@ -64,10 +71,18 @@ const columns = [
 ]	
 
 const sortOptions: {label: string, value: SortableField}[] = [
-	{label: 'Created At', value: 'created'}, 
-	{label: 'Updated At', value: 'updated'}, 
+	{label: 'Created', value: 'created'}, 
+	{label: 'Last Update', value: 'updated'}, 
 	{label: 'Last Commit', value: 'pushed'},
 	{label: 'Full Name', value: 'full_name'}
+]
+
+const filteringOptionsForOrgs: FilterableFieldsForOrgs[] = [
+	'all', 'public', 'private', 'forks', 'sources', 'member'
+]
+
+const filteringOptionsForUsers: FilterableFieldsForUsers[] = [
+	'all', 'owner', 'member'
 ]
 
 interface RepositoryListProps {
@@ -76,6 +91,9 @@ interface RepositoryListProps {
 	lastPage: number
 	quantityOptions: number[]
 	sortingData: SortingData
+	filterBy: FilterableFieldsForOrgs|FilterableFieldsForUsers
+	searchType: SearchableType
+	setFilterBy: (value: FilterableFieldsForOrgs|FilterableFieldsForUsers) => void
 	setSortData: (propety: keyof SortingData, value: string) => void
 	setPaginationData: (propety: keyof PaginationData, value: number) => void
 }
@@ -85,18 +103,24 @@ const RepositoryList = ({
 	paginationData,
 	lastPage,
 	sortingData,
+	searchType,
 	setSortData,
 	setPaginationData,
 	quantityOptions,
+	filterBy,
+	setFilterBy,
 }: RepositoryListProps) => {
 
 	//TODO: add more height to rable rows
-	//TODO: add creator name & profile icon
 	//TODO: Memoize props to not triggered when search type changed
 	const theme = useColorModeValue('ag-theme-quartz', 'ag-theme-quartz-dark')
 	const bgColor = useColorModeValue('#e2e8f0','#1f2936')
 	const {page, quantity} = paginationData
 
+	const handleFilterByChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+		const filter = event.target.value as FilterableFieldsForOrgs | FilterableFieldsForUsers
+		setFilterBy(filter)
+	}
 	const handlePaginationChange = (
 		value: number,
 		property: keyof PaginationData
@@ -119,11 +143,17 @@ const RepositoryList = ({
 		cursor: onLastPage ? undefined : 'pointer'
 	}
 
+	const filteringOptions = searchType === 'user' ? filteringOptionsForUsers : 
+		filteringOptionsForOrgs
+
 	return <div style={{ height: '80%', padding: '50px'}}>		
-		<HStack>
+		<HStack gap={3} mb={3}>
 			<FormControl>
 				<FormLabel>{'Sort By'}</FormLabel>
-				<Select value={sortingData.type} onChange={(event) => sortingDataChange(event, 'type')}>
+				<Select 
+					value={sortingData.type} 
+					onChange={(event) => sortingDataChange(event, 'type')}
+				>
 					{sortOptions.map(option => <option key={option.value}>
 						{option.label}
 					</option>)}
@@ -139,8 +169,17 @@ const RepositoryList = ({
 					<option value="desc">Descending</option>
 				</Select>
 			</FormControl>
+			<FormControl>	
+				<FormLabel>{'Filter By'}</FormLabel>
+				<Select value={filterBy} onChange={(event) => handleFilterByChange(event)}>
+					{filteringOptions.map(option => <option key={option} value={option}>
+						{capitalizeFirstLetter(option)}
+					</option>)}				
+				</Select>
+			</FormControl>
 		</HStack>
 		<AgGridReact 
+			loading={false}
 			suppressPaginationPanel={true}
 			rowData={repositories} 
 			columnDefs={columns} 

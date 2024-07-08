@@ -18,10 +18,13 @@ import {
 	SearchableType,
 	ListUserReposResponse,
 	ListOrgReposResponse,
-	SortableField
+	SortableField,
+	FilterableFieldsForOrgs,
+	FilterableFieldsForUsers
 } from "../utility/oktokitHelper";
 import RepositoryList from "./RepositoryList";
 import {onEnterKey} from "../utility/utilityEvents";
+import {isFilterableFieldForOrgs, isFilterableFieldForUsers} from "../utility/typeGuards";
 
 export type PaginationData = {page: number, quantity: number}
 export type SortingData = {direction: 'asc' | 'desc', type: SortableField}
@@ -37,11 +40,12 @@ const paginationDefault = {page: 1, quantity: quantityOptions[1]}
 const SearchPage = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
-  const [searchQuery, setSearchQuery] = useState("ffTsuzuku");
+  const [searchQuery, setSearchQuery] = useState("");
 	const [serchResult, setSearchResult] = 
 		useState<ListOrgReposResponse|ListUserReposResponse|undefined>()
 
 	const [searchType, setSearchType] = useState<SearchableType>('user')
+	const filterBy = useRef<FilterableFieldsForOrgs|FilterableFieldsForUsers>('all')
 
 	const currentSearch = useRef<AbortController|undefined>(undefined)
 	const paginationData = useRef<PaginationData>({...paginationDefault})
@@ -67,6 +71,15 @@ const SearchPage = () => {
 	const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const query = event.target.value
 		setSearchQuery(query)
+	}
+
+	//update the users filter by preference
+	const handleFilterByChange = (
+		filter: FilterableFieldsForOrgs|FilterableFieldsForUsers
+	) => {
+		filterBy.current = filter
+
+		search()
 	}
 
 	//update the users pagination preferences and search
@@ -114,7 +127,8 @@ const SearchPage = () => {
 				page, 
 				quantity,
 				sortType,
-				sortDirection
+				sortDirection,
+				isFilterableFieldForUsers(filterBy.current) ? filterBy.current : undefined
 			) : 
 			await getOrgsRepositories(
 				searchQuery, 
@@ -122,7 +136,8 @@ const SearchPage = () => {
 				page, 
 				quantity,
 				sortType,
-				sortDirection
+				sortDirection,
+				isFilterableFieldForOrgs(filterBy.current) ? filterBy.current : undefined
 			)
 
 		setSearchResult(response)
@@ -138,6 +153,7 @@ const SearchPage = () => {
 
 	//Something went wrong when searching
 	const errorMessageJsx = !!serchResult?.errorMessage && <VStack 
+		h={'100%'}
 		justifyContent={'center'} 
 		alignItems={'center'} 
 		direction={'column'} 
@@ -154,8 +170,11 @@ const SearchPage = () => {
 		quantityOptions={quantityOptions}
 		paginationData={paginationData.current} 
 		setPaginationData={handlePaginationChange}
+		searchType={searchType}
 		sortingData={sortingData.current}
 		setSortData={handleSortingChange}
+		filterBy={filterBy.current}
+		setFilterBy={handleFilterByChange}
 	/>
 
 
