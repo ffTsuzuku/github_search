@@ -93,6 +93,7 @@ interface RepositoryListProps {
 	sortingData: SortingData
 	filterBy: FilterableFieldsForOrgs|FilterableFieldsForUsers
 	searchType: SearchableType
+	loading: boolean
 	setFilterBy: (value: FilterableFieldsForOrgs|FilterableFieldsForUsers) => void
 	setSortData: (propety: keyof SortingData, value: string) => void
 	setPaginationData: (propety: keyof PaginationData, value: number) => void
@@ -106,6 +107,7 @@ const RepositoryList = ({
 	searchType,
 	setSortData,
 	setPaginationData,
+	loading,
 	quantityOptions,
 	filterBy,
 	setFilterBy,
@@ -154,7 +156,7 @@ const RepositoryList = ({
 					value={sortingData.type} 
 					onChange={(event) => sortingDataChange(event, 'type')}
 				>
-					{sortOptions.map(option => <option key={option.value}>
+					{sortOptions.map(option => <option key={option.value} value={option.value}>
 						{option.label}
 					</option>)}
 				</Select>
@@ -179,7 +181,7 @@ const RepositoryList = ({
 			</FormControl>
 		</HStack>
 		<AgGridReact 
-			loading={false}
+			loading={loading}
 			suppressPaginationPanel={true}
 			rowData={repositories} 
 			columnDefs={columns} 

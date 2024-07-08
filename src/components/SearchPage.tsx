@@ -47,6 +47,7 @@ const SearchPage = () => {
 
 	const [searchType, setSearchType] = useState<SearchableType>('user')
 	const filterBy = useRef<FilterableFieldsForOrgs|FilterableFieldsForUsers>('all')
+	const [fetching, setFetching] = useState<boolean>(false)
 
 	const currentSearch = useRef<AbortController|undefined>(undefined)
 	const paginationData = useRef<PaginationData>({...paginationDefault})
@@ -112,6 +113,7 @@ const SearchPage = () => {
 		// don't allow request when rate limited 
 		if (serchResult?.rateLimited || searchQuery == '') return 
 
+		setFetching(true)
 		if (currentSearch.current) {
 				currentSearch.current.abort('Cancelling old request')
 		}
@@ -142,6 +144,7 @@ const SearchPage = () => {
 			)
 
 		setSearchResult(response)
+		setFetching(false)
 		currentSearch.current = undefined
 	}
 
@@ -175,6 +178,7 @@ const SearchPage = () => {
 		sortingData={sortingData.current}
 		setSortData={handleSortingChange}
 		filterBy={filterBy.current}
+		loading={fetching}
 		setFilterBy={handleFilterByChange}
 	/>
 

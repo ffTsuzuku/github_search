@@ -27,8 +27,8 @@ const getUsersRepositories = (
     signal: AbortSignal,
 	page: number, 
 	quantity: number,
-	sortType: SortableField,
-	sortDirection: 'asc' | 'desc',
+	sortType?: SortableField,
+	sortDirection?: 'asc' | 'desc',
 	filterBy?: FilterableFieldsForUsers
 ): Promise<ListUserReposResponse> => {
     return getRepositoriesForUserOrOrg(
@@ -46,8 +46,8 @@ const getOrgsRepositories = (
     signal: AbortSignal,
 	page: number, 
 	quantity: number,
-	sortType: SortableField,
-	sortDirection: 'asc' | 'desc',
+	sortType?: SortableField,
+	sortDirection?: 'asc' | 'desc',
 	filterBy?: FilterableFieldsForOrgs
 ): Promise<ListOrgReposResponse> => {
     return getRepositoriesForUserOrOrg(
@@ -74,9 +74,9 @@ const getRepositoriesForUserOrOrg  = async (
     signal: AbortSignal,
 	page: number, 
 	quantity: number,
-	sortType: SortableField,
-	sortDirection: 'asc' | 'desc',
-	filterBy: FilterableFieldsForOrgs | FilterableFieldsForUsers | undefined
+	sortType?: SortableField,
+	sortDirection?: 'asc' | 'desc',
+	filterBy?: FilterableFieldsForOrgs | FilterableFieldsForUsers | undefined
 ): Promise<
 	ListUserReposResponse|
 	ListOrgReposResponse|
