@@ -15,9 +15,12 @@ type BaseRepositoriesListResponse<T> = {
 	rateLimited?: boolean,
 	lastPage?: number
 }
-
-export type ListUserReposResponse = BaseRepositoriesListResponse<ListUserRepos[]> 
-export type ListOrgReposResponse = BaseRepositoriesListResponse<ListOrgRepos[]> 
+export type ListUserReposData = ListUserRepos['data']
+export type ListOrgReposData = ListOrgRepos['data']
+export type UserRepository = ListUserReposData extends Array<infer U> ? U : never
+export type OrgRepository = ListOrgRepos extends Array<infer U> ? U : never
+export type ListUserReposResponse = BaseRepositoriesListResponse<ListUserReposData> 
+export type ListOrgReposResponse = BaseRepositoriesListResponse<ListOrgReposData> 
 export type SortableField = 'created' | 'updated' | 'pushed' | 'full_name'
 export type FilterableFieldsForOrgs = 'all'| 'public'| 'private' | 'forks'| 'sources'| 'member'
 export type FilterableFieldsForUsers = 'all' | 'owner' | 'member'
@@ -112,7 +115,6 @@ const getRepositoriesForUserOrOrg  = async (
 			lastPage = parseInt(possibleMatches[2], 10)
 		}
 
-		//@ts-ignore
         return { data: response.data, lastPage }
     } catch (e) {
         const result: BaseRepositoriesListResponse<undefined> = {
