@@ -1,6 +1,6 @@
 # Github Search
 
-[Screenshot](public/Screenshot.png)
+![Screenshot](public/Screenshot.png)
 
 This repository provides a beautiful interface for searching for repositories belonging to a user or organization.  
 use the filters and sorting tools to quickly find and organize repositories based.
