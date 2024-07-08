@@ -1,5 +1,6 @@
 import { Octokit, RequestError } from 'octokit'
 import { Endpoints  } from '@octokit/types'
+import {isFilterableFieldForOrgs, isFilterableFieldForUsers} from './typeGuards'
 
 export type SearchableType = 'user' | 'org'
 
@@ -75,14 +76,13 @@ const getRepositoriesForUserOrOrg  = async (
 	quantity: number,
 	sortType: SortableField,
 	sortDirection: 'asc' | 'desc',
-	filterBy: FilterableFieldsForOrgs | FilterableFieldsForUsers
+	filterBy: FilterableFieldsForOrgs | FilterableFieldsForUsers | undefined
 ): Promise<
 	ListUserReposResponse|
 	ListOrgReposResponse|
 	BaseRepositoriesListResponse<undefined>
 > => {
     try {
-		console.log('filter by', filterBy)
         const response = type === 'user' ? 
 			await  octokit.rest.repos.listForUser({
 				username,
@@ -90,7 +90,7 @@ const getRepositoriesForUserOrOrg  = async (
 				page: page,
 				sort: sortType,
 				direction: sortDirection,
-				type: filterBy,
+				type: isFilterableFieldForUsers(filterBy) ? filterBy : undefined,
 				request: { signal },
 			}) : 
 			await octokit.rest.repos.listForOrg({
@@ -98,7 +98,7 @@ const getRepositoriesForUserOrOrg  = async (
 				per_page: quantity,
 				page: page,
 				sort: sortType,
-				type: filterBy,
+				type: isFilterableFieldForOrgs(filterBy) ? filterBy : undefined,
 				direction: sortDirection,
 				request: { signal },
 			})
@@ -112,7 +112,6 @@ const getRepositoriesForUserOrOrg  = async (
 			lastPage = parseInt(possibleMatches[2], 10)
 		}
 
-		console.log({lastPage, lastPageUrl, paginationLinks})
 		//@ts-ignore
         return { data: response.data, lastPage }
     } catch (e) {

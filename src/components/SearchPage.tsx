@@ -9,7 +9,8 @@ import {
   Select,
   useColorMode,
 } from "@chakra-ui/react";
-import { CiSun, CiSearch } from "react-icons/ci";
+import { CiSearch } from "react-icons/ci";
+import { IoIosSunny } from "react-icons/io";
 import { FiMoon } from "react-icons/fi";
 import { MdError } from "react-icons/md";
 import { 
@@ -40,7 +41,7 @@ const paginationDefault = {page: 1, quantity: quantityOptions[1]}
 const SearchPage = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("Microsoft");
 	const [serchResult, setSearchResult] = 
 		useState<ListOrgReposResponse|ListUserReposResponse|undefined>()
 
@@ -146,7 +147,7 @@ const SearchPage = () => {
 
 
 	//modify the toggle icon based on current theme
-  let themeToggleIcon = <CiSun size={30} />;
+  let themeToggleIcon = <IoIosSunny size={30} />;
   if (colorMode === "light") {
     themeToggleIcon = <FiMoon size={30} />;
   }
@@ -216,7 +217,7 @@ const SearchPage = () => {
           alignItems="center"
           borderRadius={3}
           _hover={{
-            backgroundColor: "gray.200",
+            backgroundColor: colorMode === 'dark' ?  "gray.600" : "gray.300",
           }}
           onClick={toggleColorMode}
           color="gray.400"
