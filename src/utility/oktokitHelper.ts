@@ -1,6 +1,9 @@
 import { Octokit, RequestError } from 'octokit'
-import { Endpoints  } from '@octokit/types'
-import {isFilterableFieldForOrgs, isFilterableFieldForUsers} from './typeGuards'
+import { Endpoints } from '@octokit/types'
+import {
+    isFilterableFieldForOrgs,
+    isFilterableFieldForUsers,
+} from './typeGuards'
 
 export type SearchableType = 'user' | 'org'
 
@@ -10,58 +13,70 @@ export type ListUserRepos = Endpoints['GET /users/{username}/repos']['response']
 export type ListOrgRepos = Endpoints['GET /orgs/{org}/repos']['response']
 
 type BaseRepositoriesListResponse<T> = {
-	data?: T,
-	errorMessage?: string,
-	rateLimited?: boolean,
-	lastPage?: number
+    data?: T
+    errorMessage?: string
+    rateLimited?: boolean
+    lastPage?: number
 }
 export type ListUserReposData = ListUserRepos['data']
 export type ListOrgReposData = ListOrgRepos['data']
-export type UserRepository = ListUserReposData extends Array<infer U> ? U : never
+export type UserRepository = ListUserReposData extends Array<infer U>
+    ? U
+    : never
 export type OrgRepository = ListOrgRepos extends Array<infer U> ? U : never
-export type ListUserReposResponse = BaseRepositoriesListResponse<ListUserReposData> 
-export type ListOrgReposResponse = BaseRepositoriesListResponse<ListOrgReposData> 
+export type ListUserReposResponse =
+    BaseRepositoriesListResponse<ListUserReposData>
+export type ListOrgReposResponse =
+    BaseRepositoriesListResponse<ListOrgReposData>
 export type SortableField = 'created' | 'updated' | 'pushed' | 'full_name'
-export type FilterableFieldsForOrgs = 'all'| 'public'| 'private' | 'forks'| 'sources'| 'member'
+export type FilterableFieldsForOrgs =
+    | 'all'
+    | 'public'
+    | 'private'
+    | 'forks'
+    | 'sources'
+    | 'member'
 export type FilterableFieldsForUsers = 'all' | 'owner' | 'member'
 
 const getUsersRepositories = (
     username: string,
     signal: AbortSignal,
-	page: number, 
-	quantity: number,
-	sortType?: SortableField,
-	sortDirection?: 'asc' | 'desc',
-	filterBy?: FilterableFieldsForUsers
+    page: number,
+    quantity: number,
+    sortType?: SortableField,
+    sortDirection?: 'asc' | 'desc',
+    filterBy?: FilterableFieldsForUsers
 ): Promise<ListUserReposResponse> => {
     return getRepositoriesForUserOrOrg(
-		username, 'user', 
-		signal, 
-		page, 
-		quantity,
-		sortType,
-		sortDirection,
-		filterBy
-	) 
+        username,
+        'user',
+        signal,
+        page,
+        quantity,
+        sortType,
+        sortDirection,
+        filterBy
+    )
 }
 const getOrgsRepositories = (
     org: string,
     signal: AbortSignal,
-	page: number, 
-	quantity: number,
-	sortType?: SortableField,
-	sortDirection?: 'asc' | 'desc',
-	filterBy?: FilterableFieldsForOrgs
+    page: number,
+    quantity: number,
+    sortType?: SortableField,
+    sortDirection?: 'asc' | 'desc',
+    filterBy?: FilterableFieldsForOrgs
 ): Promise<ListOrgReposResponse> => {
     return getRepositoriesForUserOrOrg(
-		org, 'org',
-		signal,
-		page,
-		quantity,
-		sortType,
-		sortDirection,
-		filterBy
-	)
+        org,
+        'org',
+        signal,
+        page,
+        quantity,
+        sortType,
+        sortDirection,
+        filterBy
+    )
 }
 
 /**
@@ -71,49 +86,54 @@ const getOrgsRepositories = (
  * @param type: want to search for an org or user?
  * @param signal: ties the request to an abort signal
  */
-const getRepositoriesForUserOrOrg  = async (
+const getRepositoriesForUserOrOrg = async (
     username: string,
     type: SearchableType,
     signal: AbortSignal,
-	page: number, 
-	quantity: number,
-	sortType?: SortableField,
-	sortDirection?: 'asc' | 'desc',
-	filterBy?: FilterableFieldsForOrgs | FilterableFieldsForUsers | undefined
+    page: number,
+    quantity: number,
+    sortType?: SortableField,
+    sortDirection?: 'asc' | 'desc',
+    filterBy?: FilterableFieldsForOrgs | FilterableFieldsForUsers | undefined
 ): Promise<
-	ListUserReposResponse|
-	ListOrgReposResponse|
-	BaseRepositoriesListResponse<undefined>
+    | ListUserReposResponse
+    | ListOrgReposResponse
+    | BaseRepositoriesListResponse<undefined>
 > => {
     try {
-        const response = type === 'user' ? 
-			await  octokit.rest.repos.listForUser({
-				username,
-				per_page: quantity,
-				page: page,
-				sort: sortType,
-				direction: sortDirection,
-				type: isFilterableFieldForUsers(filterBy) ? filterBy : undefined,
-				request: { signal },
-			}) : 
-			await octokit.rest.repos.listForOrg({
-				org: username,
-				per_page: quantity,
-				page: page,
-				sort: sortType,
-				type: isFilterableFieldForOrgs(filterBy) ? filterBy : undefined,
-				direction: sortDirection,
-				request: { signal },
-			})
+        const response =
+            type === 'user'
+                ? await octokit.rest.repos.listForUser({
+                      username,
+                      per_page: quantity,
+                      page: page,
+                      sort: sortType,
+                      direction: sortDirection,
+                      type: isFilterableFieldForUsers(filterBy)
+                          ? filterBy
+                          : undefined,
+                      request: { signal },
+                  })
+                : await octokit.rest.repos.listForOrg({
+                      org: username,
+                      per_page: quantity,
+                      page: page,
+                      sort: sortType,
+                      type: isFilterableFieldForOrgs(filterBy)
+                          ? filterBy
+                          : undefined,
+                      direction: sortDirection,
+                      request: { signal },
+                  })
 
-		const paginationLinks = response.headers?.link ?? ''
-		const links = paginationLinks?.split(',')
-		const lastPageUrl = links.filter((link) => link.includes('last'))[0]
-		let lastPage = page
-		if (lastPageUrl) {
-			const possibleMatches = lastPageUrl.match(/\d+/g)!
-			lastPage = parseInt(possibleMatches[2], 10)
-		}
+        const paginationLinks = response.headers?.link ?? ''
+        const links = paginationLinks?.split(',')
+        const lastPageUrl = links.filter((link) => link.includes('last'))[0]
+        let lastPage = page
+        if (lastPageUrl) {
+            const possibleMatches = lastPageUrl.match(/\d+/g)!
+            lastPage = parseInt(possibleMatches[2], 10)
+        }
 
         return { data: response.data, lastPage }
     } catch (e) {
