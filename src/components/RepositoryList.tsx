@@ -8,7 +8,7 @@ import {
 import { AgGridReact } from "ag-grid-react"
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { FormControl, FormLabel, HStack, Image, Link, Select } from "@chakra-ui/react";
+import { FormControl, FormLabel, HStack, Image, Link, Select, useBreakpointValue } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
 import {PaginationData, SortingData} from "./SearchPage";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
@@ -112,10 +112,8 @@ const RepositoryList = ({
 	filterBy,
 	setFilterBy,
 }: RepositoryListProps) => {
-
-	//TODO: add more height to rable rows
-	//TODO: Memoize props to not triggered when search type changed
 	const theme = useColorModeValue('ag-theme-quartz', 'ag-theme-quartz-dark')
+	const componentHeight = useBreakpointValue({base: '65vh', lg:'75%'})
 	const bgColor = useColorModeValue('#e2e8f0','#1f2936')
 	const {page, quantity} = paginationData
 
@@ -148,7 +146,7 @@ const RepositoryList = ({
 	const filteringOptions = searchType === 'user' ? filteringOptionsForUsers : 
 		filteringOptionsForOrgs
 
-	return <div style={{ height: '80%', padding: '50px'}}>		
+	return <div style={{ height: `${componentHeight}`, padding: '15px'}}>		
 		<HStack gap={3} mb={3}>
 			<FormControl>
 				<FormLabel>{'Sort By'}</FormLabel>

@@ -143,7 +143,6 @@ const SearchPage = () => {
 				isFilterableFieldForOrgs(filterBy.current) ? filterBy.current : undefined
 			)
 
-		console.log('resp', response)
 		setSearchResult(response)
 		setFetching(false)
 		currentSearch.current = undefined

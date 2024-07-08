@@ -5,7 +5,7 @@ import SearchPage from "./components/SearchPage.tsx";
 function App() {
   return (
     <ChakraProvider theme={theme}>
-      <Box w={"100vw"} h={"100vh"} overflow={'hidden'}>
+      <Box w={"100vw"} h={"100vh"} >
         <SearchPage />
       </Box>
     </ChakraProvider>
