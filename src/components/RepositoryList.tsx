@@ -113,7 +113,7 @@ const RepositoryList = ({
 	setFilterBy,
 }: RepositoryListProps) => {
 	const theme = useColorModeValue('ag-theme-quartz', 'ag-theme-quartz-dark')
-	const componentHeight = useBreakpointValue({base: '65vh', lg:'75%'})
+	const componentHeight = useBreakpointValue({base: '65vh', lg:'75%', '2xl': '80%'})
 	const bgColor = useColorModeValue('#e2e8f0','#1f2936')
 	const {page, quantity} = paginationData
 
