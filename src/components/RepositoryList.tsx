@@ -3,8 +3,9 @@ import {
     ListOrgRepos,
     FilterableFieldsForOrgs,
     FilterableFieldsForUsers,
-    SearchableType,
-} from '../utility/oktokitHelper'
+		SearchableType,
+		SortableField
+} from '../utility/octokitHelper'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-quartz.css'
@@ -20,7 +21,6 @@ import {
 import { useColorModeValue } from '@chakra-ui/react'
 import { PaginationData, SortingData } from './SearchPage'
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md'
-import { SortableField } from '../utility/oktokitHelper'
 import { capitalizeFirstLetter } from '../utility/textUtility'
 
 const formatDate = (date: string) => {

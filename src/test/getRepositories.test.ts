@@ -3,7 +3,7 @@ import {
     getOrgsRepositories,
     getUsersRepositories,
     UserRepository,
-} from '../utility/oktokitHelper'
+} from '../utility/octokitHelper'
 import { isArrayInAscendingOrder } from '../utility/arrayUtility'
 
 const userLogin = 'ffTsuzuku'

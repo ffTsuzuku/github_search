@@ -1,7 +1,7 @@
 import {
     FilterableFieldsForOrgs,
     FilterableFieldsForUsers,
-} from './oktokitHelper'
+} from './octokitHelper'
 
 const isFilterableFieldForOrgs = (
     filter: any

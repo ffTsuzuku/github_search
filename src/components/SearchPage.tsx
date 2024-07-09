@@ -22,7 +22,7 @@ import {
     SortableField,
     FilterableFieldsForOrgs,
     FilterableFieldsForUsers,
-} from '../utility/oktokitHelper'
+} from '../utility/octokitHelper'
 import RepositoryList from './RepositoryList'
 import { onEnterKey } from '../utility/utilityEvents'
 import {
@@ -51,7 +51,7 @@ const SearchPage = () => {
 
     const [searchType, setSearchType] = useState<SearchableType>('user')
     const filterBy = useRef<FilterableFieldsForOrgs | FilterableFieldsForUsers>(
-        'all'
+        "all"
     )
     const [fetching, setFetching] = useState<boolean>(false)
 
