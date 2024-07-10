@@ -3,18 +3,18 @@
 ![Screenshot](public/Screenshot.png)
 
 This repository provides a beautiful interface for searching for repositories belonging to a user or organization.  
-use the filters and sorting tools to quickly find and organize repositories based.
+Use the filters and sorting tools to quickly find and organize repositories.
 
 ## Features
 
 ### Supported Filters For Organizations
 
--   `All:` All repositories created by organization.
+-   `All:` All repositories created by organization
 -   `Public`: Public repositories
 -   `Private` Private repositories
--   `Forks:` Repositories that are forked from others.
+-   `Forks:` Repositories that are forked from others
 -   `Sources` Repositories that are not forked from others
--   `Member` Repositories where the organization is not the owner.
+-   `Member` Repositories where the organization is not the owner
 
 `NOTE:` The all and private Filter requires you to provide a valid Github token that belongs to the organzation. More on that below.
 
@@ -22,12 +22,12 @@ use the filters and sorting tools to quickly find and organize repositories base
 
 -   `All` All repositories created by the user
 -   `Public`: Public Repositories
--   `Member:` Repositories where the user is not the owner.
+-   `Member:` Repositories where the user is not the owner
 
 # Tech Used
 
 -   [Octokit SDK](https://github.com/octokit): For making calls to the github api
--   [Vitest](https://vitest.dev/) For unit testing the api calls.
+-   [Vitest](https://vitest.dev/) For unit testing the api calls
 -   [Vite](https://vitejs.dev/) For building and running the application
 
 # Coming Soon
@@ -36,8 +36,8 @@ This application will be extended to support a details page that allows users to
 
 -   Languages Used
 -   Contributors
--   Stats about how many views, stars, and forks.
--   A button to quickly copy the clone link to your clipboard.
+-   Stats about how many views, stars, and forks
+-   A button to quickly copy the clone link to your clipboard
 
 # Setting Up The Application
 
@@ -52,4 +52,4 @@ define an `api key` e.g VITE_API_TOKEN=`<YOUR_API_KEY>`.The main beneifits of ma
 
 ## Testing
 
-Testing is done via Vitest to run your test use `npm run test`.
+Testing is done via Vitest, to run your test use `npm run test`.
