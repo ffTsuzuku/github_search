@@ -16,7 +16,7 @@ Use the filters and sorting tools to quickly find and organize repositories.
 -   `Sources` Repositories that are not forked from others
 -   `Member` Repositories where the organization is not the owner
 
-`NOTE:` The `all` and `private` Filter requires you to provide a valid Github token that belongs to the organzation. More on that below.
+`NOTE:` The `all` and `private` filter requires you to provide a valid Github token that belongs to the organzation. More on that below.
 
 ### Supported Filters For Users
 
@@ -34,8 +34,8 @@ Use the filters and sorting tools to quickly find and organize repositories.
 
 This application will be extended to support a details page that allows users to view additional information about a repository such as.
 
--   Languages Used
--   Contributors
+-   Show languages used within the repository
+-   Show contributors tied to a repository
 -   Stats about how many views, stars, and forks
 -   A button to quickly copy the clone link to your clipboard
 
