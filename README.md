@@ -29,6 +29,9 @@ Use the filters and sorting tools to quickly find and organize repositories.
 -   [Octokit SDK](https://github.com/octokit): For making calls to the github api
 -   [Vitest](https://vitest.dev/) For unit testing the api calls
 -   [Vite](https://vitejs.dev/) For building and running the application
+-   [ChakraUi](https://v2.chakra-ui.com) For styling
+-   [AGGrid](https://www.ag-grid.com/) For displaying the data.
+
 
 # Coming Soon
 
@@ -45,11 +48,11 @@ This application will be extended to support a details page that allows users to
 
 After cloning the repository run `npm install` and then `npm run dev`.
 
-### Making authenticated reques
+### Making authenticated request
 
 If you want to make authenticated reponses you can create a `.env` file and place it in the root directory. In that file
 define an `api key` e.g VITE_API_TOKEN=`<YOUR_API_KEY>`.The main beneifits of making authenticated responses is to [have a higher rate limit](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28) and also makes it so you can fetch `private repositories` that belong to your organization.
 
 ## Testing
 
-Testing is done via Vitest, to run your test use `npm run test`.
+Testing is done via `Vitest`, to run your test use `npm run test`.
