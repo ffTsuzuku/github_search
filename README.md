@@ -16,7 +16,7 @@ Use the filters and sorting tools to quickly find and organize repositories.
 -   `Sources` Repositories that are not forked from others
 -   `Member` Repositories where the organization is not the owner
 
-`NOTE:` The all and private Filter requires you to provide a valid Github token that belongs to the organzation. More on that below.
+`NOTE:` The `all` and `private` Filter requires you to provide a valid Github token that belongs to the organzation. More on that below.
 
 ### Supported Filters For Users
 
