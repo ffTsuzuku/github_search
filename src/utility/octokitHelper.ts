@@ -9,9 +9,6 @@ export type SearchableType = 'user' | 'org'
 
 const octokit = new Octokit({ auth: import.meta.env.VITE_API_TOKEN })
 
-export type ListUserRepos = Endpoints['GET /users/{username}/repos']['response']
-export type ListOrgRepos = Endpoints['GET /orgs/{org}/repos']['response']
-
 type BaseRepositoriesListResponse<T> = {
     data?: T
     errorMessage?: string
